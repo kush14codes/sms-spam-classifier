@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pickle
 import string
@@ -16,12 +15,17 @@ st.set_page_config(
 # ---------------- NLTK SETUP ----------------
 try:
     nltk.data.find('tokenizers/punkt')
-except:
+except LookupError:
     nltk.download('punkt')
 
 try:
+    nltk.data.find('tokenizers/punkt_tab')
+except LookupError:
+    nltk.download('punkt_tab')
+
+try:
     nltk.data.find('corpora/stopwords')
-except:
+except LookupError:
     nltk.download('stopwords')
 
 ps = PorterStemmer()
@@ -29,10 +33,6 @@ ps = PorterStemmer()
 # ---------------- CUSTOM CSS ----------------
 st.markdown("""
 <style>
-
-.main {
-    padding-top: 1rem;
-}
 
 .main-title {
     text-align: center;
@@ -66,7 +66,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- PREPROCESSING ----------------
+# ---------------- TEXT PREPROCESSING ----------------
 def transform_text(text):
     text = text.lower()
     text = nltk.word_tokenize(text)
@@ -92,11 +92,11 @@ def transform_text(text):
 
     return " ".join(y)
 
-# ---------------- LOAD FILES ----------------
-with open('vectorizer.pkl', 'rb') as f:
+# ---------------- LOAD MODEL ----------------
+with open("vectorizer.pkl", "rb") as f:
     tfidf = pickle.load(f)
 
-with open('model.pkl', 'rb') as f:
+with open("model.pkl", "rb") as f:
     model = pickle.load(f)
 
 # ---------------- SIDEBAR ----------------
@@ -126,14 +126,11 @@ with st.sidebar:
     st.divider()
 
     st.subheader("📌 Example Spam")
-
     st.code(
-        "Congratulations! You won ₹50,000. "
-        "Claim your reward now."
+        "Congratulations! You won ₹50,000. Claim your reward now."
     )
 
     st.subheader("📌 Example Ham")
-
     st.code(
         "Hey, are we still meeting tomorrow at 5 PM?"
     )
@@ -167,11 +164,12 @@ input_sms = st.text_area(
     placeholder="Type or paste your SMS / Email message here..."
 )
 
-# ---------------- BUTTON ----------------
+# ---------------- PREDICTION ----------------
 if st.button("🔍 Analyze Message"):
 
     if len(input_sms.strip()) == 0:
         st.warning("Please enter a message first.")
+
     else:
 
         transformed_sms = transform_text(input_sms)
@@ -180,7 +178,6 @@ if st.button("🔍 Analyze Message"):
 
         result = model.predict(vector_input)[0]
 
-        # Probability
         confidence = None
 
         try:
@@ -196,11 +193,10 @@ if st.button("🔍 Analyze Message"):
             st.error("🚨 SPAM MESSAGE DETECTED")
 
             st.write(
-                "This message appears suspicious and "
-                "contains spam-like characteristics."
+                "This message appears suspicious and contains spam-like characteristics."
             )
 
-            if confidence:
+            if confidence is not None:
                 st.progress(int(confidence))
                 st.metric(
                     "Spam Detection Confidence",
@@ -212,11 +208,10 @@ if st.button("🔍 Analyze Message"):
             st.success("✅ LEGITIMATE MESSAGE")
 
             st.write(
-                "This message appears safe and does "
-                "not contain spam characteristics."
+                "This message appears safe and does not contain spam characteristics."
             )
 
-            if confidence:
+            if confidence is not None:
                 st.progress(int(confidence))
                 st.metric(
                     "Prediction Confidence",
@@ -228,3 +223,4 @@ st.markdown(
     "<div class='footer'>Developed by Kushagra Chaubey</div>",
     unsafe_allow_html=True
 )
+
