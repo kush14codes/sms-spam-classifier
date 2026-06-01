@@ -152,10 +152,9 @@ streamlit run app.py
 
 Computer Science Engineering Student | Data Science & Machine Learning Enthusiast
 
-LinkedIn: Add Your LinkedIn Profile
+LinkedIn: https://www.linkedin.com/in/kushagra-chaubey-a86049291/
 
-GitHub: Add Your GitHub Profile
-
+GitHub: https://github.com/kush14codes/
 ---
 
 ⭐ If you found this project useful, consider giving it a star.
