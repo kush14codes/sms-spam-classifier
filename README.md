@@ -4,7 +4,7 @@ A Machine Learning-powered web application that classifies Email and SMS message
 
 ## 🚀 Live Demo
 
-Add your Streamlit deployment link here after deployment:
+
 
 ```text
 https://sms-spam-classifier-uyr6uzttnyc87pmeptpqv8.streamlit.app/
